@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "DexSQL MCP",
+    "description": "Connects DexSQL over stdio and exposes APK/DEX analysis tools to DSH."
+  }
+}

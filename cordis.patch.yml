@@ -1,0 +1,18 @@
+# DexSQL MCP connection.
+#
+# This bundle intentionally contains configuration only. It requires the
+# `dexsql` executable to be installed and available on PATH; it does not
+# download or ship the closed-source DexSQL binary.
+- insert:
+    - id: dexsql-mcp
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: dexsql
+        transport: stdio
+        command: dexsql
+        args:
+          - mcp
+          - --timeout-ms
+          - "300000"
+        failOnStartupError: true
+        toolCallTimeoutMs: 300000

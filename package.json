@@ -1,0 +1,58 @@
+{
+  "name": "@lolkda/dsh-dexsql-mcp",
+  "version": "0.1.0",
+  "description": "DexSQL MCP bundle for DeepSeek Harness",
+  "license": "MIT",
+  "author": "lolkda",
+  "type": "module",
+  "homepage": "https://github.com/lolkda/dsh-dexsql-mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lolkda/dsh-dexsql-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lolkda/dsh-dexsql-mcp/issues"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "dexsql",
+    "mcp",
+    "apk",
+    "dex"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE",
+    "icon.svg",
+    "locale/*.json"
+  ],
+  "exports": {
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "dsh": ">=0.2.1-rc.2 <0.3.0"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "test:mcp": "node --test test/mcp.test.mjs",
+    "pack:check": "npm pack --dry-run",
+    "verify": "npm test && npm run pack:check",
+    "prepublishOnly": "npm test"
+  },
+  "devDependencies": {
+    "yaml": "^2.9.1"
+  }
+}

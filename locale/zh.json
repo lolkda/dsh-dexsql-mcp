@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "DexSQL MCP",
+    "description": "通过 stdio 连接 DexSQL，为 DSH 提供 APK/DEX 分析工具。"
+  }
+}

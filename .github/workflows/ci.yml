@@ -1,0 +1,37 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Check packed files
+        run: npm run pack:check
+
+      - name: Validate DSH bundle composition
+        env:
+          DSH_HOME: ${{ runner.temp }}/dsh-home
+        run: |
+          npm install --global pnpm@12.4.2 @deepseek-ai/dsh@0.2.1-rc.2
+          dsh plugin --profile verify add "$PWD"
+          dsh --profile verify --dump-config | grep -q 'id: dexsql-mcp'
