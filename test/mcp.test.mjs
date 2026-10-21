@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
+const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 const probe = spawnSync('dexsql', ['--version'], { encoding: 'utf8' });
 const hasDexsql = probe.status === 0;
 
@@ -60,7 +62,7 @@ test('dexsql mcp answers initialize and tools/list', { skip: !hasDexsql && 'dexs
   const initialized = await request('initialize', {
     protocolVersion: '2025-06-18',
     capabilities: {},
-    clientInfo: { name: 'dsh-dexsql-mcp-test', version: '0.1.0' },
+    clientInfo: { name: 'dsh-dexsql-mcp-test', version: pkg.version },
   });
   assert.equal(initialized.serverInfo?.name, 'dexsql');
   assert.ok(initialized.protocolVersion);

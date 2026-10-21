@@ -1,6 +1,6 @@
 {
   "name": "@lolkda/dsh-dexsql-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DexSQL MCP bundle for DeepSeek Harness",
   "license": "MIT",
   "author": "lolkda",
@@ -27,6 +27,7 @@
   "files": [
     "cordis.patch.yml",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE",
     "icon.svg",
     "locale/*.json"

@@ -15,7 +15,7 @@ const row = patch
 
 test('package is a publishable DSH configuration bundle', () => {
   assert.equal(pkg.name, '@lolkda/dsh-dexsql-mcp');
-  assert.equal(pkg.version, '0.1.0');
+  assert.match(pkg.version, /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/);
   assert.equal(pkg.private, undefined);
   assert.equal(pkg.dsh?.bundle?.patch, './cordis.patch.yml');
   assert.equal(pkg.publishConfig?.access, 'public');
@@ -24,7 +24,7 @@ test('package is a publishable DSH configuration bundle', () => {
 });
 
 test('published files include the patch and plugin metadata', () => {
-  for (const file of ['cordis.patch.yml', 'README.md', 'LICENSE', 'icon.svg', 'locale/en.json', 'locale/zh.json']) {
+  for (const file of ['cordis.patch.yml', 'README.md', 'CHANGELOG.md', 'LICENSE', 'icon.svg', 'locale/en.json', 'locale/zh.json']) {
     assert.ok(pkg.files.includes(file) || pkg.files.some((entry) => entry.endsWith('/*.json')), `missing ${file}`);
   }
 });
@@ -64,7 +64,7 @@ test('npm pack contains the bundle files and no DexSQL binary', () => {
   const [pack] = JSON.parse(output);
   const files = pack.files.map((file) => file.path);
 
-  for (const expected of ['package.json', 'cordis.patch.yml', 'README.md', 'LICENSE', 'icon.svg', 'locale/en.json', 'locale/zh.json']) {
+  for (const expected of ['package.json', 'cordis.patch.yml', 'README.md', 'CHANGELOG.md', 'LICENSE', 'icon.svg', 'locale/en.json', 'locale/zh.json']) {
     assert.ok(files.includes(expected), `${expected} is missing from npm pack`);
   }
   assert.ok(!files.includes('dexsql'), 'the DexSQL binary must not be published');

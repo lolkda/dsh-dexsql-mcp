@@ -1,6 +1,7 @@
 # @lolkda/dsh-dexsql-mcp
 
 [![ci](https://github.com/lolkda/dsh-dexsql-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/lolkda/dsh-dexsql-mcp/actions/workflows/ci.yml)
+[![publish](https://github.com/lolkda/dsh-dexsql-mcp/actions/workflows/publish.yml/badge.svg)](https://github.com/lolkda/dsh-dexsql-mcp/actions/workflows/publish.yml)
 [![npm](https://img.shields.io/npm/v/@lolkda/dsh-dexsql-mcp.svg)](https://www.npmjs.com/package/@lolkda/dsh-dexsql-mcp)
 
 A configuration-only [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) bundle that connects [DexSQL](https://github.com/LSPosed/dexsql-release) to DSH through the official `@deepseek-ai/dsh-mcp-client` Host plugin.
