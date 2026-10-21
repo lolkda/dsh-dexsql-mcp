@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- Remove the custom plugin icon; the DSH plugin manager falls back to its default artwork.
+
 ## 0.1.1
 
 - Publish through GitHub Actions with npm trusted publishing (OIDC).

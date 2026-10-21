@@ -24,7 +24,7 @@ test('package is a publishable DSH configuration bundle', () => {
 });
 
 test('published files include the patch and plugin metadata', () => {
-  for (const file of ['cordis.patch.yml', 'README.md', 'CHANGELOG.md', 'LICENSE', 'icon.svg', 'locale/en.json', 'locale/zh.json']) {
+  for (const file of ['cordis.patch.yml', 'README.md', 'CHANGELOG.md', 'LICENSE', 'locale/en.json', 'locale/zh.json']) {
     assert.ok(pkg.files.includes(file) || pkg.files.some((entry) => entry.endsWith('/*.json')), `missing ${file}`);
   }
 });
@@ -45,14 +45,13 @@ test('patch does not hard-code an image-only binary path', () => {
   assert.doesNotMatch(read('cordis.patch.yml'), /\/usr\/local\/bin\/dexsql/);
 });
 
-test('locale and icon resources are valid', () => {
+test('locale metadata is valid', () => {
   const en = JSON.parse(read('locale/en.json'));
   const zh = JSON.parse(read('locale/zh.json'));
   assert.equal(en.meta?.title, 'DexSQL MCP');
   assert.equal(zh.meta?.title, 'DexSQL MCP');
   assert.ok(en.meta?.description);
   assert.ok(zh.meta?.description);
-  assert.match(read('icon.svg'), /^<svg[\s\S]*<\/svg>\s*$/);
 });
 
 test('npm pack contains the bundle files and no DexSQL binary', () => {
@@ -64,7 +63,7 @@ test('npm pack contains the bundle files and no DexSQL binary', () => {
   const [pack] = JSON.parse(output);
   const files = pack.files.map((file) => file.path);
 
-  for (const expected of ['package.json', 'cordis.patch.yml', 'README.md', 'CHANGELOG.md', 'LICENSE', 'icon.svg', 'locale/en.json', 'locale/zh.json']) {
+  for (const expected of ['package.json', 'cordis.patch.yml', 'README.md', 'CHANGELOG.md', 'LICENSE', 'locale/en.json', 'locale/zh.json']) {
     assert.ok(files.includes(expected), `${expected} is missing from npm pack`);
   }
   assert.ok(!files.includes('dexsql'), 'the DexSQL binary must not be published');
