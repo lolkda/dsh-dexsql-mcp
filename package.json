@@ -1,6 +1,7 @@
 {
   "name": "@lolkda/dsh-dexsql-mcp",
-  "version": "0.1.2",
+  "version": "0.2.0",
+  "private": true,
   "description": "DexSQL MCP bundle for DeepSeek Harness",
   "license": "MIT",
   "author": "lolkda",
@@ -47,6 +48,8 @@
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "test:mcp": "node --test test/mcp.test.mjs",
+    "test:sync": "node --test test/sync-dexsql.test.mjs",
+    "sync:dexsql": "node scripts/sync-dexsql.mjs",
     "pack:check": "npm pack --dry-run",
     "verify": "npm test && npm run pack:check",
     "prepublishOnly": "npm test"

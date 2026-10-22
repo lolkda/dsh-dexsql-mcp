@@ -1,9 +1,24 @@
-name: publish
+name: publish-and-sync
 
 on:
   release:
     types: [published]
+  push:
+    branches: [main]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Upstream DexSQL tag to sync (empty = latest stable release)'
+        required: false
+        type: string
+      dry_run:
+        description: 'Stage and test the package without publishing'
+        required: false
+        default: true
+        type: boolean
+  schedule:
+    # 08:17, 12:17, 18:17, and 22:17 Asia/Shanghai.
+    - cron: '17 0,4,10,14 * * *'
 
 permissions:
   contents: read
@@ -16,13 +31,13 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "24"
+          node-version: '24'
 
       - name: Verify release tag matches package version
         if: github.event_name == 'release'
@@ -38,11 +53,50 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Check packed files
-        run: npm run pack:check
-
-      - name: Ensure npm supports trusted publishing
+      - name: Install npm with trusted publishing
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.dry_run != 'true'
         run: npm install --global npm@11.19.1
 
+      - name: Stage package from upstream
+        id: stage
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.inputs.tag }}
+        run: |
+          set -euo pipefail
+          args=(--out .build/npm)
+          if [[ -n "${TAG:-}" ]]; then
+            args+=(--tag "$TAG")
+          fi
+          if [[ "${GITHUB_EVENT_NAME}" == "release" ]]; then
+            version="$(node -p "require('./package.json').version")"
+            args+=(--version "$version")
+          fi
+          node scripts/sync-dexsql.mjs "${args[@]}"
+          changed="$(node -p "require('./.build/npm/manifest.json').changed")"
+          version="$(node -p "require('./.build/npm/manifest.json').version")"
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Verify staged package
+        if: steps.stage.outputs.changed == 'true'
+        run: npm pack ./.build/npm/package --dry-run >/dev/null
+
       - name: Publish through npm trusted publishing (OIDC)
-        run: npm publish --access public --provenance --registry=https://registry.npmjs.org
+        if: steps.stage.outputs.changed == 'true' && (github.event_name != 'workflow_dispatch' || github.event.inputs.dry_run != 'true')
+        env:
+          VERSION: ${{ steps.stage.outputs.version }}
+        run: |
+          set -euo pipefail
+          registry=https://registry.npmjs.org
+          if npm view "@lolkda/dsh-dexsql-mcp@${VERSION}" version --registry="$registry" >/dev/null 2>&1; then
+            echo "@lolkda/dsh-dexsql-mcp@${VERSION} already exists; skipping"
+            exit 0
+          fi
+          npm publish ./.build/npm/package --access public --provenance --registry="$registry"
+
+      - name: Summarize
+        run: |
+          {
+            node -e "const m=require('./.build/npm/manifest.json'); console.log('DexSQL '+m.tag+' -> @lolkda/dsh-dexsql-mcp@'+m.version+(m.changed?' (staged)':' (already packaged)'));"
+          } >> "$GITHUB_STEP_SUMMARY"

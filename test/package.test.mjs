@@ -8,15 +8,15 @@ import { parse } from 'yaml';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const pkg = JSON.parse(read('package.json'));
-const patch = parse(read('cordis.patch.yml'));
+const patch = parse(read('cordis.patch.yml'), { logLevel: 'silent' });
 const row = patch
   .flatMap((layer) => layer.insert ?? [])
   .find((entry) => entry.id === 'dexsql-mcp');
 
-test('package is a publishable DSH configuration bundle', () => {
+test('source package is a DSH configuration bundle', () => {
   assert.equal(pkg.name, '@lolkda/dsh-dexsql-mcp');
   assert.match(pkg.version, /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/);
-  assert.equal(pkg.private, undefined);
+  assert.equal(pkg.private, true);
   assert.equal(pkg.dsh?.bundle?.patch, './cordis.patch.yml');
   assert.equal(pkg.publishConfig?.access, 'public');
   assert.equal(pkg.engines?.dsh, '>=0.2.1-rc.2 <0.3.0');
@@ -29,13 +29,16 @@ test('published files include the patch and plugin metadata', () => {
   }
 });
 
-test('patch inserts the official MCP Host plugin', () => {
+test('patch inserts the official MCP Host plugin and runs the profile launcher', () => {
   assert.ok(row, 'dexsql-mcp row is missing');
   assert.equal(row.name, '@deepseek-ai/dsh-mcp-client');
   assert.equal(row.config?.serverName, 'dexsql');
   assert.equal(row.config?.transport, 'stdio');
-  assert.equal(row.config?.command, 'dexsql');
-  assert.deepEqual(row.config?.args, ['mcp', '--timeout-ms', '300000']);
+  assert.equal(row.config?.command, 'process.execPath');
+  assert.equal(row.config?.args.length, 4);
+  assert.match(row.config.args[0], /@lolkda\/dsh-dexsql-mcp\/bin\/dexsql\.mjs/);
+  assert.match(row.config.args[0], /baseUrl/);
+  assert.deepEqual(row.config.args.slice(1), ['mcp', '--timeout-ms', '300000']);
   assert.equal(row.config?.failOnStartupError, true);
   assert.equal(row.config?.toolCallTimeoutMs, 300000);
   assert.equal('cwd' in row.config, false);
@@ -43,6 +46,11 @@ test('patch inserts the official MCP Host plugin', () => {
 
 test('patch does not hard-code an image-only binary path', () => {
   assert.doesNotMatch(read('cordis.patch.yml'), /\/usr\/local\/bin\/dexsql/);
+});
+
+test('the source package is configuration-only; the release build adds the binaries', () => {
+  assert.equal(pkg.files.some((file) => file.startsWith('vendor/')), false);
+  assert.equal(pkg.files.includes('bin/dexsql.mjs'), false);
 });
 
 test('locale metadata is valid', () => {

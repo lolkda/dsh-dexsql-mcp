@@ -1,16 +1,17 @@
 # DexSQL MCP connection.
 #
-# This bundle intentionally contains configuration only. It requires the
-# `dexsql` executable to be installed and available on PATH; it does not
-# download or ship the closed-source DexSQL binary.
+# The published npm tarball contains the launcher and all six platform
+# binaries. The DSH plugin manager installs the package in the profile, and
+# this row starts the bundled launcher without requiring a global PATH entry.
 - insert:
     - id: dexsql-mcp
       name: '@deepseek-ai/dsh-mcp-client'
       config:
         serverName: dexsql
         transport: stdio
-        command: dexsql
+        command: !!js process.execPath
         args:
+          - !!js decodeURIComponent(new URL('./node_modules/@lolkda/dsh-dexsql-mcp/bin/dexsql.mjs', baseUrl).pathname).replace(/^\/([A-Za-z]:)/, '$1')
           - mcp
           - --timeout-ms
           - "300000"
