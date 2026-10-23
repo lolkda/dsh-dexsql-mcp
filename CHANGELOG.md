@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- 解除 DSH 版本门禁：`engines.dsh` 与 `dsh.compatibility.dsh` 改为 `*`，不再仅因宿主版本号拒绝安装或启动。
+
 ## 0.2.0
 
 - Publish the launcher and DexSQL binaries for all six platforms inside `@lolkda/dsh-dexsql-mcp`, so installing the bundle is the only installation step and no global `PATH` entry is required.
