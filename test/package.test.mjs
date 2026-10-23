@@ -19,7 +19,8 @@ test('source package is a DSH configuration bundle', () => {
   assert.equal(pkg.private, true);
   assert.equal(pkg.dsh?.bundle?.patch, './cordis.patch.yml');
   assert.equal(pkg.publishConfig?.access, 'public');
-  assert.equal(pkg.engines?.dsh, '>=0.2.1-rc.2 <0.3.0');
+  assert.equal(pkg.engines?.dsh, '*');
+  assert.equal(pkg.dsh?.compatibility?.dsh, '*');
   assert.match(pkg.repository?.url ?? '', /^git\+https:\/\/github\.com\/lolkda\/dsh-dexsql-mcp\.git$/);
 });
 

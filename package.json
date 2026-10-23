@@ -40,10 +40,13 @@
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "compatibility": {
+      "dsh": "*"
     }
   },
   "engines": {
-    "dsh": ">=0.2.1-rc.2 <0.3.0"
+    "dsh": "*"
   },
   "scripts": {
     "test": "node --test test/*.test.mjs",

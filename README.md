@@ -18,7 +18,7 @@ The git checkout remains configuration-only and is marked `private`. The release
 
 ## Requirements
 
-- DSH `>=0.2.1-rc.2 <0.3.0`
+- DSH: 运行时清单不限定版本；开发与发布验收基线为 `0.2.1-rc.2`（更新版本需重新做真实宿主回归）
 - One of the supported platforms:
   - Linux x64 or arm64 (glibc)
   - macOS x64 or arm64
